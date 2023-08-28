@@ -1,7 +1,6 @@
 class Node():
-    def __init__(self, state, movie, parent, action):
+    def __init__(self, state, parent, action):
         self.state = state
-        self.movie = movie
         self.parent = parent
         self.action = action
 
@@ -11,14 +10,14 @@ class StackFrontier():
         self.frontier = []
         self.explored = []
 
-    def is_explored(self, node):
-        return node in self.explored
-    
-    def add(self, node):
-        self.frontier.append(node)
+    def is_explored(self, person):
+        return any(node.state == person.state for node in self.explored)
     
     def add_explored(self, node):
         self.explored.append(node)
+    
+    def add(self, node):
+        self.frontier.append(node)
 
     def contains_state(self, state):
         return any(node.state == state for node in self.frontier)

@@ -92,44 +92,36 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
     # Setup an initial state node
-    inicial = Node(state=source, movie=0, parent=0, action=0)
+    inicial = Node(source, None, None)
     
     # Setup frontier
     queue = QueueFrontier()
     queue.add(inicial)
     
-    while not queue.contains_state(target):     
+    while True:
+        # If empty, nothing left to check
         if queue.empty():
             return None
-        else:
-            # Explore first-in node and remove from frontier
-            node = queue.remove()
-            queue.add_explored(node)
-            # Expand the node
-            next_person = neighbors_for_person(node.state)
-            # Create a node for each return from neighbors
-            for person in next_person:
-                if person[1] == target:
-                    person_node = Node(state=person[1], movie = person[0], parent=node, action=0)
-                    node.action = person_node
-                    last_node = person_node
-                    queue.add(person_node)
-                    break
-                else:
-                    person_node = Node(state=person[1], movie = person[0], parent=node, action=0)
-                    if not queue.is_explored(person_node):
-                        queue.add(person_node)
-    # Make path with the last node found
-    path = set()
-    while last_node.parent!=0:
-        path.add((last_node.movie, last_node.state))
-        last_node = last_node.parent
-    print(path)
-    path = list(path)
-    path.reverse()
-    return path
-    
-    
+        # Remove a node and explore
+        node = queue.remove()
+        queue.add_explored(node)
+        # Expand node
+        expanded = neighbors_for_person(node.state)
+        for movie,person in expanded:
+            # Convert sets into node object
+            next_node = Node(person, parent=node, action=movie)
+            if not queue.contains_state(target) and not queue.is_explored(next_node):
+                # Check if next node is the goal and create a path if it is
+                if next_node.state == target:
+                    path = []
+                    while next_node.parent is not None:
+                        path.append((next_node.action, next_node.state))
+                        next_node = next_node.parent
+                    path.reverse()
+                    return path               
+                queue.add(next_node)
+        
+ 
 def person_id_for_name(name):
     """
     Returns the IMDB id for a person's name,
