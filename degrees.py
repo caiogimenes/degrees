@@ -91,31 +91,45 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    paths =[]
-    neighbors = neighbors_for_person(source)
-    start = Node(state=source, parent=0, action=neighbors)
+    # Setup an initial state node
+    inicial = Node(state=source, movie=0, parent=0, action=0)
+    
+    # Setup frontier
     queue = QueueFrontier()
-    for neighbor in neighbors:
-        node = Node(state=neighbor[1], parent=start, action=neighbors_for_person(neighbor[1]))
-        queue.add(node)
+    queue.add(inicial)
     
-    while not queue.contains_state(target):
-        for node in queue.frontier:
-            for next in node.action:
-                n = Node(state=next[1], parent=node, action=neighbors_for_person(next[1]))
-                queue.add(n)
-                queue.remove()
+    while not queue.contains_state(target):     
+        if queue.empty():
+            return None
+        else:
+            # Explore first-in node and remove from frontier
+            node = queue.remove()
+            queue.add_explored(node)
+            # Expand the node
+            next_person = neighbors_for_person(node.state)
+            # Create a node for each return from neighbors
+            for person in next_person:
+                if person[1] == target:
+                    person_node = Node(state=person[1], movie = person[0], parent=node, action=0)
+                    node.action = person_node
+                    last_node = person_node
+                    queue.add(person_node)
+                    break
+                else:
+                    person_node = Node(state=person[1], movie = person[0], parent=node, action=0)
+                    if not queue.is_explored(person_node):
+                        queue.add(person_node)
+    # Make path with the last node found
+    path = set()
+    while last_node.parent!=0:
+        path.add((last_node.movie, last_node.state))
+        last_node = last_node.parent
+    print(path)
+    path = list(path)
+    path.reverse()
+    return path
     
-    for node in queue.frontier:
-        if node.state == target:
-            paths.append(node)
     
-    for path in paths:
-        if path != start:
-            paths.append([path, path.parent])
-    print(paths)
-    return paths
-                 
 def person_id_for_name(name):
     """
     Returns the IMDB id for a person's name,
