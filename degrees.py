@@ -91,10 +91,21 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-
-    # TODO
-    raise NotImplementedError
-
+    frontier = QueueFrontier()
+    explored = StackFrontier()
+    
+    source_node = Node(source, None, neighbors_for_person(source))
+    
+    frontier.add(source_node)
+    
+    if frontier.empty == True:
+        return 'No solution found'
+    
+    pending_node = frontier.remove()
+    if pending_node.state == target:
+        return 'Node found'
+    
+    explored.add(pending_node)
 
 def person_id_for_name(name):
     """
