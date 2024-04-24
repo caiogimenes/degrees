@@ -91,37 +91,11 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    # Setup an initial state node
-    inicial = Node(source, None, None)
-    
-    # Setup frontier
-    queue = QueueFrontier()
-    queue.add(inicial)
-    
-    while True:
-        # If empty, nothing left to check
-        if queue.empty():
-            return None
-        # Remove a node and explore
-        node = queue.remove()
-        queue.add_explored(node)
-        # Expand node
-        expanded = neighbors_for_person(node.state)
-        for movie,person in expanded:
-            # Convert sets into node object
-            next_node = Node(person, parent=node, action=movie)
-            if not queue.contains_state(target) and not queue.is_explored(next_node):
-                # Check if next node is the goal and create a path if it is
-                if next_node.state == target:
-                    path = []
-                    while next_node.parent is not None:
-                        path.append((next_node.action, next_node.state))
-                        next_node = next_node.parent
-                    path.reverse()
-                    return path               
-                queue.add(next_node)
-        
- 
+
+    # TODO
+    raise NotImplementedError
+
+
 def person_id_for_name(name):
     """
     Returns the IMDB id for a person's name,

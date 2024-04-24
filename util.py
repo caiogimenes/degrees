@@ -8,14 +8,7 @@ class Node():
 class StackFrontier():
     def __init__(self):
         self.frontier = []
-        self.explored = []
 
-    def is_explored(self, person):
-        return any(node.state == person.state for node in self.explored)
-    
-    def add_explored(self, node):
-        self.explored.append(node)
-    
     def add(self, node):
         self.frontier.append(node)
 
@@ -32,6 +25,7 @@ class StackFrontier():
             node = self.frontier[-1]
             self.frontier = self.frontier[:-1]
             return node
+
 
 class QueueFrontier(StackFrontier):
 
