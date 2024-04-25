@@ -91,21 +91,49 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    # Set up Frontier and Explored set
     frontier = QueueFrontier()
     explored = StackFrontier()
     
-    source_node = Node(source, None, neighbors_for_person(source))
-    
+    # Add starting node
+    source_node = Node(source, None, None)
     frontier.add(source_node)
     
-    if frontier.empty == True:
-        return 'No solution found'
+    # Loop until find the target or return None
+    while True:
+        if frontier.empty():
+            print('No solution found')
+            return None
+        
+        # Pick a node
+        pending_node = frontier.remove()
+        explored.add(pending_node)
+                
+        # Add possible nodes to frontier
+        neighbors = neighbors_for_person(pending_node.state)
+        for movie, person in neighbors:
+            node = Node(person, pending_node, movie)
+            
+            # Goal test (moved here to improve efficiency, but normally is after picking the node)
+            if person == target:
+                path = result(node, source)
+                return path
+            
+            if not explored.contains_state(person) and not frontier.contains_state(person):
+                frontier.add(node)
+        
+
+def result(node,source):
+    """
+    Return the resulting list
+    """
+    path = []
+    while node.state != source:
+        path.append((node.action, node.state))
+        node = node.parent
+    path.reverse()
     
-    pending_node = frontier.remove()
-    if pending_node.state == target:
-        return 'Node found'
-    
-    explored.add(pending_node)
+    return path
 
 def person_id_for_name(name):
     """
